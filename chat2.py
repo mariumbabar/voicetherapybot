@@ -1,11 +1,9 @@
-#(works perfectly with voice input and output)
 import json
 import random
 import speech_recognition as sr
 import torch
 from gtts import gTTS
 from playsound import playsound
-import sys
 
 from model import NeuralNet
 from nltk_utils import bag_of_words, tokenize
@@ -39,9 +37,9 @@ def get_audio():
         message = r.recognize_google(audio)
         return message
     except sr.UnknownValueError:
-        pass
+        return "I'm sorry, I did not understand what you said"
     except sr.RequestError:
-        pass
+        return "Sorry, I'm having trouble accessing the speech recognition service"
 
 def get_response(msg):
     sentence = tokenize(msg)
@@ -79,12 +77,12 @@ if __name__ == "__main__":
     print("Start talking with the bot (say 'bye' or 'quit' to stop)!")
     while True:
         message = get_audio()
-        if not message:
-            continue
-        if message.lower() in ["bye", "quit"]:
-            print("Goodbye!")
-            sys.exit()
-        print("You: " + message)
-        response = get_response(message)
-        print(bot_name + ": " + response)
-
+        if message:
+            if message.lower() in ["bye", "quit"]:
+                print("Goodbye!")
+                break
+            print("You: " + message)
+            response = get_response(message)
+            print(bot_name + ": " + response)
+        else:
+            print("I'm sorry, I did not understand what you said")
